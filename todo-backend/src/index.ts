@@ -1,15 +1,20 @@
+import './module-aliases';
+import routes from './routes';
 import dotenv from 'dotenv';
 import express from 'express';
 import { AddressInfo } from 'net';
 
 dotenv.config();
+
 const app = express();
 
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send({ message: 'Test!!!' });
+  res.send({ message: 'Test one!!!' });
 });
+
+app.use(routes);
 
 const server = app.listen(process.env.APP_PORT, () => {
   if (server) {
