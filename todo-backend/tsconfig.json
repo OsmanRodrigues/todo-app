@@ -7,7 +7,15 @@
     "sourceMap": true,
     "target": "es6",
     "module": "commonjs",
-    "esModuleInterop": true
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@data/*": ["data/*"],
+      "@entities/*": ["entities/*"],
+      "@services/*": ["services/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

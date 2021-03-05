@@ -16,6 +16,6 @@ const server = app.listen(process.env.APP_PORT, () => {
     const address = server.address() as AddressInfo;
     console.log(`Server is running in http://localhost:${address.port}`);
   } else {
-    console.error(`Failure upon starting server.`);
+    console.error('Failure upon starting server.');
   }
 });
