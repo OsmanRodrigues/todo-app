@@ -1,0 +1,10 @@
+version: '3' ## especifica a versão do docker-compose file
+
+services: ## Define um serviço
+  todo-backend: ## nome do serviço
+    build: ./todo-backend ## localização do dockerfile
+    command: npm start ## comando a executar
+    ports:
+      - '${BACKEND_APP_PORT}:${BACKEND_APP_PORT}' ## redirecionamento de porta quando chegar alguma requisição na porta 5000 chama o container na porta 5000
+    volumes:
+      - ./todo-backend:/todo-backend/api ## monitoro a pasta atual . e envio as alterações para /todo-backend/api
