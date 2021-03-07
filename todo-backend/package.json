@@ -6,7 +6,8 @@
   "scripts": {
     "check-types": "tsc --noEmit",
     "lint": "eslint 'src/**/*.{ts,tsx}' && npm run check-types",
-    "start": "npm run lint && nodemon ./src/index.ts",
+    "start": "npm run lint && ts-node ./src/index.ts",
+    "start:dev": "npm run lint && nodemon ./src/index.ts",
     "docker:build": "docker build -t todo-backend/dockernode .",
     "docker:start": "docker run -p 5000:5000 -d todo-backend/dockernode"
   },
@@ -22,7 +23,7 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.95.1",
     "module-alias": "^2.2.2",
-    "mysql": "^2.18.1",
+    "pg": "^8.5.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

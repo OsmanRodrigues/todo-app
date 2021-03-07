@@ -13,7 +13,7 @@ export class UserDatabase extends BaseDatabase {
         })
         .into(process.env.USER_TABLE_NAME);
     } catch (e) {
-      console.log('error:', e);
+      console.log('error: ', e);
       throw new Error('Failed to create user.');
     }
   }

@@ -10,7 +10,7 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
     email: req.body.email,
     password: req.body.password
   };
-  console.log(body);
+
   const newId = 'user1'; // TODO: change this after uuid
   const hashedPwd = body.password + 'hashed';
 
@@ -24,15 +24,13 @@ export const signup = async (req: Request, res: Response): Promise<void> => {
 
     const accessToken = 'Bearer tokenof' + body.name;
 
-    res
-      .send({
-        message: `User ${body.name} successfully created!`,
-        accessToken
-      })
-      .status(200);
+    res.status(200).send({
+      message: `User ${body.name} successfully created!`,
+      accessToken
+    });
 
     await useUserDataBase.destroyConnection();
   } catch (e) {
-    res.send({ message: e.message }).status(400);
+    res.status(400).send({ message: e.message });
   }
 };

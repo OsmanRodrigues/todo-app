@@ -16,11 +16,15 @@ app.get('/', (req, res) => {
 
 app.use(routes);
 
-const server = app.listen(process.env.APP_PORT, () => {
+const server = app.listen(process.env.BACKEND_PORT, () => {
   if (server) {
     const address = server.address() as AddressInfo;
     console.log(`Server is running in http://localhost:${address.port}`);
   } else {
     console.error('Failure upon starting server.');
   }
+});
+
+process.on('uncaughtException', err => {
+  console.log(err);
 });
