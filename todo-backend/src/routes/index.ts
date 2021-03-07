@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { signup } from '@endpoints/user';
+import { signup } from '@controllers/user';
 
 export const routes = Router();
 

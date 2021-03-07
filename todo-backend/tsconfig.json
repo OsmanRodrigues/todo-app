@@ -17,10 +17,12 @@
     "baseUrl": "./src",
     "paths": {
       "@data/*": ["data/*"],
-      "@endpoints/*": ["endpoints/*"],
+      "@controllers/*": ["controllers/*"],
       "@entities/*": ["entities/*"],
+      "@models/*": ["models/*"],
       "@routes/*": ["routes/*"],
-      "@services/*": ["services/*"]
+      "@services/*": ["services/*"],
+      "@tools/*": ["tools/*"]
     }
   },
   "include": ["src/**/*"],

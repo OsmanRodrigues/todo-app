@@ -1,6 +1,6 @@
 import { Response, Request } from 'express';
 import { UserDatabase } from '@data/UserDatabase';
-import { SignupRequestBody } from './models';
+import { SignupRequestBody } from '@models/data-models/Request.model';
 
 const useUserDataBase = new UserDatabase();
 

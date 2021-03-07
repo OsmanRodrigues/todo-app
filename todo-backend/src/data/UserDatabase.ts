@@ -1,5 +1,5 @@
+import { SignupInput } from '@models/data-models/Input.model';
 import { BaseDatabase } from '@services/BaseDatabase';
-import { SignupInput } from './models';
 
 export class UserDatabase extends BaseDatabase {
   public async createUser(input: SignupInput): Promise<void> {
