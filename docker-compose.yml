@@ -1,10 +1,29 @@
-version: '3' ## especifica a versão do docker-compose file
+version: '3'
 
-services: ## Define um serviço
-  todo-backend: ## nome do serviço
-    build: ./todo-backend ## localização do dockerfile
-    command: npm start ## comando a executar
-    ports:
-      - '${BACKEND_APP_PORT}:${BACKEND_APP_PORT}' ## redirecionamento de porta quando chegar alguma requisição na porta 5000 chama o container na porta 5000
+services:
+  todo-db:
+    container_name: 'todo-db'
+    build: ./todo-data
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+    restart: always
     volumes:
-      - ./todo-backend:/todo-backend/api ## monitoro a pasta atual . e envio as alterações para /todo-backend/api
+      - 'todo-data:/var/lib/postgresql/data'
+    ports:
+      - '${DATABASE_PORT}:${DATABASE_PORT}'
+
+  todo-backend:
+    build: ./todo-backend
+    container_name: 'todo-backend'
+    command: npm start
+    environment:
+      - DATABASE_HOST=todo-db #This env variable change in order to connect with todo-db container
+    ports:
+      - '${BACKEND_PORT}:${BACKEND_PORT}'
+    links:
+      - todo-db
+
+volumes:
+  todo-data:
