@@ -1,8 +1,8 @@
 import './module-aliases';
-import routes from './routes';
 import dotenv from 'dotenv';
 import express from 'express';
 import { AddressInfo } from 'net';
+import UserRouter from '@routes/UserRoutes';
 
 dotenv.config();
 
@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
   res.send({ message: 'Test one!!!' });
 });
 
-app.use(routes);
+app.use(UserRouter);
 
 const server = app.listen(process.env.BACKEND_PORT, () => {
   if (server) {
