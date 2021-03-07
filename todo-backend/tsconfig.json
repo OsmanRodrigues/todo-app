@@ -16,6 +16,7 @@
     "isolatedModules": true,
     "baseUrl": "./src",
     "paths": {
+      "@business/*": ["business/*"],
       "@controllers/*": ["controllers/*"],
       "@data/*": ["data/*"],
       "env-helper": ["env-helper"],

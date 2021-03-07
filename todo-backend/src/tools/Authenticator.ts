@@ -1,34 +1,26 @@
 import jwt from 'jsonwebtoken';
+import { Env } from 'env-helper';
 import { AuthenticationData } from '@models/tools-models';
 import { CustomError } from './CustomError';
-import { Env } from 'env-helper';
 
 const { ACC_TOKEN_EXPIRES_IN, JWT_KEY } = Env;
 
 export class Authenticator {
-  public generateAccessToken(
-    input: AuthenticationData,
+  public generateToken(
+    data: AuthenticationData,
     expiresIn: string = ACC_TOKEN_EXPIRES_IN
-  ): { accessToken: string } {
-    const accessToken = jwt.sign(
-      {
-        id: input.id,
-        role: input.role,
-        device: input.device
-      },
-      JWT_KEY as string,
-      { expiresIn }
-    );
-    return { accessToken };
+  ): { token: string } {
+    const token = jwt.sign({ id: data.id }, JWT_KEY, { expiresIn });
+
+    return { token: `Bearer ${token}` };
   }
 
   public getData(token: string): AuthenticationData {
-    const payload = jwt.verify(token, JWT_KEY as string) as any;
+    const payload = jwt.verify(token, JWT_KEY) as AuthenticationData;
     const result = {
       id: payload.id,
       name: payload.name,
-      email: payload.email,
-      role: payload.role
+      email: payload.email
     };
     return result;
   }

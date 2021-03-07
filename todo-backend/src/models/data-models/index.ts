@@ -1,2 +1,2 @@
-export * from './Input.model';
+export * from './User.model';
 export * from './Request.model';

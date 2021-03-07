@@ -2,6 +2,7 @@ import ModuleAlias from 'module-alias';
 
 ModuleAlias.addAliases({
   '@root': __dirname,
+  '@business': __dirname.concat('/business'),
   '@controllers': __dirname.concat('/controllers'),
   '@data': __dirname.concat('/data'),
   'env-helper': __dirname.concat('/env-helper'),

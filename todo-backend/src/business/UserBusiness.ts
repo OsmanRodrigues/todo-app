@@ -1,22 +1,23 @@
 import { UserDatabase } from '@data/UserDatabase';
 import { SignupRequestBody } from '@models/data-models/Request.model';
+import { Authenticator } from '@tools/Authenticator';
+import { HashManager } from '@tools/HashManager';
+import { IdGenerator } from '@tools/IdGenerator';
 
 const useUserDataBase = new UserDatabase();
 
 export class UserBusiness {
-  signup = async (body: SignupRequestBody): Promise<string> => {
-    const newId = 'user1'; // TODO: change this after uuid
-    const hashedPwd = body.password + 'hashed';
-
-    await useUserDataBase.createUser({
+  signup = async (body: SignupRequestBody): Promise<{ token: string }> => {
+    const newId = new IdGenerator().generate();
+    const hashedPassword = await new HashManager().hash(body.password);
+    const authenticationData = await useUserDataBase.createUser({
       id: newId,
       name: body.name,
       email: body.email,
-      password: hashedPwd
+      password: hashedPassword
     });
+    const token = new Authenticator().generateToken(authenticationData);
 
-    const accessToken = 'Bearer tokenof' + body.name;
-
-    return accessToken;
+    return token;
   };
 }

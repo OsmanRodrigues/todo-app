@@ -1,8 +1,10 @@
 import { Response, Request } from 'express';
-import { UserDatabase } from '@data/UserDatabase';
 import { SignupRequestBody } from '@models/data-models/Request.model';
+import { UserBusiness } from '@business/UserBusiness';
+import { StatusCodes } from 'http-status-codes';
+import { CustomError } from '@tools/CustomError';
 
-const useUserDataBase = new UserDatabase();
+const userBusiness = new UserBusiness();
 
 export class UserController {
   signup = async (req: Request, res: Response): Promise<void> => {
@@ -12,27 +14,26 @@ export class UserController {
       password: req.body.password
     };
 
-    const newId = 'user1'; // TODO: change this after uuid
-    const hashedPwd = body.password + 'hashed';
-
     try {
-      await useUserDataBase.createUser({
-        id: newId,
-        name: body.name,
-        email: body.email,
-        password: hashedPwd
+      Object.keys(body).forEach(key => {
+        const userInfo = body[key as keyof SignupRequestBody];
+
+        if (key !== 'name' && !userInfo) {
+          throw new CustomError(
+            StatusCodes.BAD_REQUEST,
+            `User ${key} required.`
+          );
+        }
       });
 
-      const accessToken = 'Bearer tokenof' + body.name;
+      const businessResponse = await userBusiness.signup(body);
 
-      res.status(200).send({
-        message: `User ${body.name} successfully created!`,
-        accessToken
+      res.status(StatusCodes.CREATED).send({
+        message: `User ${body.name || body.email} successfully created!`,
+        token: businessResponse.token
       });
-
-      await useUserDataBase.destroyConnection();
-    } catch (e) {
-      res.status(400).send({ message: e.message });
+    } catch (err) {
+      res.status(StatusCodes.BAD_REQUEST).send({ message: err.message });
     }
   };
 }
