@@ -1,10 +1,11 @@
 import bcrypt from 'bcryptjs';
+import { Env } from 'env-helper';
 
 export class HashManager {
   public async hash(plainText: string): Promise<string> {
     const hash = await bcrypt.hash(
       plainText,
-      await bcrypt.genSalt(Number(process.env.BCRYPT_COST))
+      await bcrypt.genSalt(Number(Env.BCRYPT_COST))
     );
 
     return hash;

@@ -1,11 +1,14 @@
 import jwt from 'jsonwebtoken';
 import { AuthenticationData } from '@models/tools-models';
 import { CustomError } from './CustomError';
+import { Env } from 'env-helper';
+
+const { ACC_TOKEN_EXPIRES_IN, JWT_KEY } = Env;
 
 export class Authenticator {
   public generateAccessToken(
     input: AuthenticationData,
-    expiresIn: string = process.env.ACC_TOKEN_EXPIRES_IN
+    expiresIn: string = ACC_TOKEN_EXPIRES_IN
   ): { accessToken: string } {
     const accessToken = jwt.sign(
       {
@@ -13,14 +16,14 @@ export class Authenticator {
         role: input.role,
         device: input.device
       },
-      process.env.JWT_KEY as string,
+      JWT_KEY as string,
       { expiresIn }
     );
     return { accessToken };
   }
 
   public getData(token: string): AuthenticationData {
-    const payload = jwt.verify(token, process.env.JWT_KEY as string) as any;
+    const payload = jwt.verify(token, JWT_KEY as string) as any;
     const result = {
       id: payload.id,
       name: payload.name,

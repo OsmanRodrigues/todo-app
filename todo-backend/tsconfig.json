@@ -16,8 +16,9 @@
     "isolatedModules": true,
     "baseUrl": "./src",
     "paths": {
-      "@data/*": ["data/*"],
       "@controllers/*": ["controllers/*"],
+      "@data/*": ["data/*"],
+      "env-helper": ["env-helper"],
       "@entities/*": ["entities/*"],
       "@models/*": ["models/*"],
       "@routes/*": ["routes/*"],

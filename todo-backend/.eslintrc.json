@@ -15,6 +15,6 @@
     "space-before-function-paren": "off",
     "semi": ["error", "always"],
     "quotes": ["error", "single"],
-    "no-useless-catch": "on"
+    "no-useless-catch": "warn"
   }
 }

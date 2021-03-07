@@ -1,10 +1,8 @@
-import './module-aliases';
-import dotenv from 'dotenv';
+import './module-aliases-helper';
 import express from 'express';
 import { AddressInfo } from 'net';
 import UserRouter from '@routes/UserRoutes';
-
-dotenv.config();
+import { Env } from 'env-helper';
 
 const app = express();
 
@@ -16,7 +14,7 @@ app.get('/', (req, res) => {
 
 app.use(UserRouter);
 
-const server = app.listen(process.env.BACKEND_PORT, () => {
+const server = app.listen(Env.BACKEND_PORT, () => {
   if (server) {
     const address = server.address() as AddressInfo;
     console.log(`Server is running in http://localhost:${address.port}`);

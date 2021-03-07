@@ -1,4 +1,13 @@
 import knex, { Knex } from 'knex';
+import { Env } from 'env-helper';
+
+const {
+  DATABASE_HOST,
+  DATABASE_PORT,
+  DATABASE_USER,
+  DATABASE_PASSWORD,
+  DATABASE_NAME
+} = Env;
 
 export abstract class BaseDatabase {
   private static connection: Knex | null = null;
@@ -8,11 +17,11 @@ export abstract class BaseDatabase {
       BaseDatabase.connection = knex({
         client: 'postgres',
         connection: {
-          host: process.env.DATABASE_HOST,
-          port: Number(process.env.DATABASE_PORT),
-          user: process.env.DATABASE_USER,
-          password: process.env.DATABASE_PASSWORD,
-          database: process.env.DATABASE_NAME
+          host: DATABASE_HOST,
+          port: Number(DATABASE_PORT),
+          user: DATABASE_USER,
+          password: DATABASE_PASSWORD,
+          database: DATABASE_NAME
         }
       });
     }
