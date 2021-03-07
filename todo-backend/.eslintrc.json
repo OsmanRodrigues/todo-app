@@ -15,6 +15,7 @@
     "space-before-function-paren": "off",
     "semi": ["error", "always"],
     "quotes": ["error", "single"],
-    "no-useless-catch": "warn"
+    "no-useless-catch": "warn",
+    "no-useless-constructor": "off"
   }
 }

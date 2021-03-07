@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import './module-aliases-helper';
 import express from 'express';
 import { AddressInfo } from 'net';

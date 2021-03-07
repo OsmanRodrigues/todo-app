@@ -3,20 +3,27 @@ import { SignupRequestBody } from '@models/data-models/Request.model';
 import { Authenticator } from '@tools/Authenticator';
 import { HashManager } from '@tools/HashManager';
 import { IdGenerator } from '@tools/IdGenerator';
+import { Service } from 'typedi';
 
-const useUserDataBase = new UserDatabase();
-
+@Service()
 export class UserBusiness {
+  constructor(
+    private authenticator: Authenticator,
+    private hashManager: HashManager,
+    private idGenerator: IdGenerator,
+    private userDatabase: UserDatabase
+  ) {}
+
   signup = async (body: SignupRequestBody): Promise<{ token: string }> => {
-    const newId = new IdGenerator().generate();
-    const hashedPassword = await new HashManager().hash(body.password);
-    const authenticationData = await useUserDataBase.createUser({
+    const newId = this.idGenerator.generate();
+    const hashedPassword = await this.hashManager.hash(body.password);
+    const authenticationData = await this.userDatabase.createUser({
       id: newId,
       name: body.name,
       email: body.email,
       password: hashedPassword
     });
-    const token = new Authenticator().generateToken(authenticationData);
+    const token = this.authenticator.generateToken(authenticationData);
 
     return token;
   };

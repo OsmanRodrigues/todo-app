@@ -4,7 +4,9 @@ import { BaseDatabase } from '@services/BaseDatabase';
 import { CustomError } from '@tools/CustomError';
 import { Env } from 'env-helper';
 import { StatusCodes } from 'http-status-codes';
+import { Service } from 'typedi';
 
+@Service()
 export class UserDatabase extends BaseDatabase {
   public async createUser(userDTO: UserSignupDTO): Promise<AuthenticationData> {
     try {

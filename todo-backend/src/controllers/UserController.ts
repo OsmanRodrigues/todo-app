@@ -3,10 +3,12 @@ import { SignupRequestBody } from '@models/data-models/Request.model';
 import { UserBusiness } from '@business/UserBusiness';
 import { StatusCodes } from 'http-status-codes';
 import { CustomError } from '@tools/CustomError';
+import { Service } from 'typedi';
 
-const userBusiness = new UserBusiness();
-
+@Service()
 export class UserController {
+  constructor(private userBusiness: UserBusiness) {}
+
   signup = async (req: Request, res: Response): Promise<void> => {
     const body: SignupRequestBody = {
       name: req.body.name,
@@ -26,7 +28,7 @@ export class UserController {
         }
       });
 
-      const businessResponse = await userBusiness.signup(body);
+      const businessResponse = await this.userBusiness.signup(body);
 
       res.status(StatusCodes.CREATED).send({
         message: `User ${body.name || body.email} successfully created!`,

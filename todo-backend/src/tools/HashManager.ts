@@ -1,6 +1,8 @@
 import bcrypt from 'bcryptjs';
 import { Env } from 'env-helper';
+import { Service } from 'typedi';
 
+@Service()
 export class HashManager {
   public async hash(plainText: string): Promise<string> {
     const hash = await bcrypt.hash(

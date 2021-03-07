@@ -1,5 +1,6 @@
 import knex, { Knex } from 'knex';
 import { Env } from 'env-helper';
+import { Service } from 'typedi';
 
 const {
   DATABASE_HOST,
@@ -9,6 +10,7 @@ const {
   DATABASE_NAME
 } = Env;
 
+@Service()
 export abstract class BaseDatabase {
   private static connection: Knex | null = null;
 

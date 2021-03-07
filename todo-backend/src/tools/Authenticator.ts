@@ -2,9 +2,10 @@ import jwt from 'jsonwebtoken';
 import { Env } from 'env-helper';
 import { AuthenticationData } from '@models/tools-models';
 import { CustomError } from './CustomError';
-
+import { Service } from 'typedi';
 const { ACC_TOKEN_EXPIRES_IN, JWT_KEY } = Env;
 
+@Service()
 export class Authenticator {
   public generateToken(
     data: AuthenticationData,
