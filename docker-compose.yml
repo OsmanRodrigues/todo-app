@@ -14,16 +14,16 @@ services:
     ports:
       - '${DATABASE_PORT}:${DATABASE_PORT}'
 
-  todo-backend:
-    build: ./todo-backend
-    container_name: 'todo-backend'
-    command: npm start
-    environment:
-      - DATABASE_HOST=todo-db #This env variable change in order to connect with todo-db container
-    ports:
-      - '${BACKEND_PORT}:${BACKEND_PORT}'
-    links:
-      - todo-db
+  # todo-backend:
+  #   build: ./todo-backend
+  #   container_name: 'todo-backend'
+  #   command: npm start
+  #   environment:
+  #     - DATABASE_HOST=todo-db #This env variable change in order to connect with todo-db container
+  #   ports:
+  #     - '${BACKEND_PORT}:${BACKEND_PORT}'
+  #   links:
+  #     - todo-db
 
 volumes:
   todo-data:
