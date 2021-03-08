@@ -1,0 +1,18 @@
+name: Code check
+on: [pull_request]
+
+jobs:
+  code-check:
+    runs-on: ubuntu-18.04
+    defaults:
+      run:
+        working-directory: ./todo-backend
+    steps:
+      - uses: actions/checkout@main
+        with:
+          ref: ${{ github.ref }}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.19.0'
+      - run: npm install
+      - run: npm run lint

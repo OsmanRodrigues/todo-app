@@ -6,8 +6,31 @@
     "outDir": "build",
     "sourceMap": true,
     "target": "es6",
-    "module": "commonjs",
-    "esModuleInterop": true
+    "module": "CommonJS",
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@business/*": ["business/*"],
+      "@controllers/*": ["controllers/*"],
+      "@data/*": ["data/*"],
+      "env-helper": ["env-helper"],
+      "@entities/*": ["entities/*"],
+      "@models": ["models"],
+      "@models/*": ["models/*"],
+      "@routes": ["routes"],
+      "@routes/*": ["routes/*"],
+      "@services/*": ["services/*"],
+      "@tools": ["tools"],
+      "@tools/*": ["tools/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
