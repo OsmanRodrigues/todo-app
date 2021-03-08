@@ -1,4 +1,4 @@
-import { AuthenticationData, GetTaskResponseInfos, UserDTO } from '@models';
+import { AuthenticationData, TaskResponseInfos } from '@models';
 import { TaskDatabaseAction } from '@models/action-models/DatabaseAction.model';
 import { TaskDTO } from '@models/data-models/Task.model';
 import { BaseDatabase } from '@services/BaseDatabase';
@@ -35,22 +35,37 @@ export class TaskDatabase extends BaseDatabase {
 
   get: TaskDatabaseAction<
     AuthenticationData,
-    GetTaskResponseInfos[]
+    TaskResponseInfos[]
   > = async authenticationDTO => {
     const { id } = authenticationDTO;
     try {
-      const record: GetTaskResponseInfos[] = await this.getConnection()
+      const record: TaskResponseInfos[] = await this.getConnection()
         .select('id', 'title', 'content', 'list')
         .from(this.taskTableName)
-        .where('owner_id', '=', id);
-      await this.destroyConnection();
+        .where({ owner_id: id });
 
+      await this.destroyConnection();
       return record;
     } catch (err) {
       throw new CustomError(
         StatusCodes.INTERNAL_SERVER_ERROR,
-        'Failed to create task.'
+        'Failed to get task list.'
       );
+    }
+  };
+
+  update: TaskDatabaseAction<TaskDTO, void> = async taskDTO => {
+    const { id, list, title, content, ownerId } = taskDTO;
+    try {
+      const connection = this.getConnection();
+
+      await connection(this.taskTableName)
+        .update({ id, list, title, content })
+        .where({ id, owner_id: ownerId });
+
+      await this.destroyConnection();
+    } catch (err) {
+      throw new CustomError(StatusCodes.NOT_MODIFIED, 'Failed to update task.');
     }
   };
 }

@@ -1,5 +1,10 @@
 import { TaskBusiness } from '@business/TaskBusiness';
-import { Task, TaskBusinessDTO, TaskControllerAction, TaskDTO } from '@models';
+import {
+  Task,
+  TaskBusinessDTO,
+  TaskControllerAction,
+  UpdateTaskRequestInfos
+} from '@models';
 import { CustomError } from '@tools';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
@@ -9,16 +14,15 @@ import { IncomingHttpHeaders } from 'node:http2';
 export class TaskController {
   constructor(private taskBusiness: TaskBusiness) {}
 
-  private body: Task | TaskDTO;
+  private body: Task | UpdateTaskRequestInfos;
   private headers: IncomingHttpHeaders;
 
   private checkRequestInfos = (param: {
-    body?: Task | TaskDTO;
+    body?: Task | UpdateTaskRequestInfos;
     headers: IncomingHttpHeaders;
     isCreate?: boolean;
-    isGet?: boolean;
   }) => {
-    const { body, headers, isCreate, isGet } = param;
+    const { body, headers, isCreate } = param;
 
     if (!headers.authorization) {
       throw new CustomError(
@@ -27,7 +31,7 @@ export class TaskController {
       );
     }
 
-    if (!isGet) {
+    if (body) {
       const bodyProperties = Object.keys(body);
       if (!bodyProperties.length) {
         throw new CustomError(
@@ -79,7 +83,9 @@ export class TaskController {
       this.body = null;
       this.headers = null;
     } catch (err) {
-      res.status(err.status).send({ message: err.message });
+      const { status, message } = err;
+
+      res.status(status).send({ message });
     }
   };
 
@@ -87,8 +93,7 @@ export class TaskController {
     try {
       this.headers = req.headers;
       this.checkRequestInfos({
-        headers: this.headers,
-        isGet: true
+        headers: this.headers
       });
       const businessResult = await this.taskBusiness.get({
         authorization: this.headers.authorization
@@ -98,7 +103,37 @@ export class TaskController {
       this.body = null;
       this.headers = null;
     } catch (err) {
-      res.status(err.status).send({ message: err.message });
+      const { status, message } = err;
+
+      res.status(status).send({ message });
+    }
+  };
+
+  update: TaskControllerAction = async (req, res) => {
+    try {
+      this.headers = req.headers;
+      this.body = req.body;
+      this.checkRequestInfos({ headers: this.headers, body: this.body });
+
+      const { id } = req.params;
+      if (!id) {
+        throw new CustomError(
+          StatusCodes.BAD_REQUEST,
+          'Missing a task id param.'
+        );
+      }
+
+      const taskInfos: UpdateTaskRequestInfos = { ...this.body, id };
+      const updatedTask = await this.taskBusiness.update({
+        taskInfos,
+        authorization: this.headers.authorization
+      });
+
+      res.status(StatusCodes.OK).send({ updatedTask });
+    } catch (err) {
+      const { status, message } = err;
+
+      res.status(status).send({ message });
     }
   };
 }

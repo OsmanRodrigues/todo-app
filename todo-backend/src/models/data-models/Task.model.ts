@@ -1,4 +1,4 @@
-enum LIST {
+export enum LIST {
   NEW = 'NEW',
   TODO = 'TODO',
   DOING = 'DOING',
