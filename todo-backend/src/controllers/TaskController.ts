@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import { TaskBusiness } from '@business/TaskBusiness';
 import { Task, TaskBusinessDTO, TaskControllerAction, TaskDTO } from '@models';
 import { CustomError } from '@tools';
@@ -14,11 +13,12 @@ export class TaskController {
   private headers: IncomingHttpHeaders;
 
   private checkRequestInfos = (param: {
-    body: Task | TaskDTO;
+    body?: Task | TaskDTO;
     headers: IncomingHttpHeaders;
     isCreate?: boolean;
+    isGet?: boolean;
   }) => {
-    const { body, headers, isCreate } = param;
+    const { body, headers, isCreate, isGet } = param;
 
     if (!headers.authorization) {
       throw new CustomError(
@@ -27,27 +27,29 @@ export class TaskController {
       );
     }
 
-    const bodyProperties = Object.keys(body);
-    if (!bodyProperties.length) {
-      throw new CustomError(
-        StatusCodes.BAD_REQUEST,
-        'This request requires a body.'
-      );
-    }
-
-    bodyProperties.forEach(key => {
-      const taksInfo = body[key as keyof typeof body];
-      const customError = new CustomError(
-        StatusCodes.BAD_REQUEST,
-        `Card ${key} is required.`
-      );
-
-      if (!taksInfo && isCreate && key === 'title') {
-        throw customError;
-      } else if (!taksInfo && !isCreate && key !== 'content') {
-        throw customError;
+    if (!isGet) {
+      const bodyProperties = Object.keys(body);
+      if (!bodyProperties.length) {
+        throw new CustomError(
+          StatusCodes.BAD_REQUEST,
+          'This request requires a body.'
+        );
       }
-    });
+
+      bodyProperties.forEach(key => {
+        const taksInfo = body[key as keyof typeof body];
+        const customError = new CustomError(
+          StatusCodes.BAD_REQUEST,
+          `Card ${key} is required.`
+        );
+
+        if (!taksInfo && isCreate && key === 'title') {
+          throw customError;
+        } else if (!taksInfo && !isCreate && key !== 'content') {
+          throw customError;
+        }
+      });
+    }
   };
 
   create: TaskControllerAction = async (req, res) => {
@@ -73,6 +75,25 @@ export class TaskController {
       const createdTask = await this.taskBusiness.create(taskBusinessDTO);
 
       res.status(StatusCodes.CREATED).send({ createdTask });
+
+      this.body = null;
+      this.headers = null;
+    } catch (err) {
+      res.status(err.status).send({ message: err.message });
+    }
+  };
+
+  get: TaskControllerAction = async (req, res) => {
+    try {
+      this.headers = req.headers;
+      this.checkRequestInfos({
+        headers: this.headers,
+        isGet: true
+      });
+      const businessResult = await this.taskBusiness.get({
+        authorization: this.headers.authorization
+      });
+      res.status(StatusCodes.OK).send({ tasks: businessResult });
 
       this.body = null;
       this.headers = null;
