@@ -31,8 +31,10 @@ export class UserDatabase extends BaseDatabase {
         name
       };
     } catch (err) {
-      console.log('error: ', err);
-      throw new CustomError(StatusCodes.BAD_REQUEST, 'Failed to create user.');
+      throw new CustomError(
+        StatusCodes.INTERNAL_SERVER_ERROR,
+        'Failed to create user.'
+      );
     }
   };
 
@@ -46,6 +48,8 @@ export class UserDatabase extends BaseDatabase {
         .select('*')
         .from(this.userTableName)
         .where({ [queryField]: fieldValue });
+
+      await this.destroyConnection();
 
       return result;
     } catch (err) {

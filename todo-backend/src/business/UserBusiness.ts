@@ -1,6 +1,9 @@
 import { UserDatabase } from '@data/UserDatabase';
-import { BusinessAction, FindUserDTO } from '@models';
-import { SignupRequestBody } from '@models/data-models/Request.model';
+import { BusinessAction } from '@models';
+import {
+  LoginResquestInfos,
+  SignupRequestInfos
+} from '@models/data-models/Request.model';
 import { Authenticator, CustomError, HashManager, IdGenerator } from '@tools';
 import { StatusCodes } from 'http-status-codes';
 
@@ -15,24 +18,19 @@ export class UserBusiness {
     private userDatabase: UserDatabase
   ) {}
 
-  private checkIfUserAlreadyExists = async (param: FindUserDTO) => {
-    const databaseResult = await this.userDatabase.findUser(param);
-
-    if (databaseResult.length) {
-      throw new CustomError(
-        StatusCodes.NOT_ACCEPTABLE,
-        'User e-mail or id already used.'
-      );
-    }
-  };
-
-  signup: BusinessAction<SignupRequestBody> = async userDTO => {
+  signup: BusinessAction<SignupRequestInfos> = async userDTO => {
     const { email, name, password } = userDTO;
 
     const newId = this.idGenerator.generate();
     const hashedPassword = await this.hashManager.hash(password);
+    const databaseResult = await this.userDatabase.findUser({ email });
 
-    await this.checkIfUserAlreadyExists({ email });
+    if (databaseResult.length) {
+      throw new CustomError(
+        StatusCodes.NOT_ACCEPTABLE,
+        'User e-mail already used.'
+      );
+    }
 
     const authenticationData = await this.userDatabase.createUser({
       id: newId,
@@ -41,6 +39,28 @@ export class UserBusiness {
       password: hashedPassword
     });
     const token = this.authenticator.generateToken(authenticationData);
+
+    return token;
+  };
+
+  login: BusinessAction<LoginResquestInfos> = async userDTO => {
+    const { email, password } = userDTO;
+    const databaseResult = await this.userDatabase.findUser({ email });
+
+    if (!databaseResult.length) {
+      throw new CustomError(StatusCodes.NOT_FOUND, 'User not found.');
+    }
+    const userRecord = databaseResult[0];
+    const passwordIsValid = await this.hashManager.checkHash(
+      userRecord.password,
+      password
+    );
+
+    if (!passwordIsValid) {
+      throw new CustomError(StatusCodes.NOT_ACCEPTABLE, 'Wrong password.');
+    }
+
+    const token = this.authenticator.generateToken(userRecord);
 
     return token;
   };

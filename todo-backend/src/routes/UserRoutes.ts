@@ -7,5 +7,6 @@ const userController = Container.get(UserController);
 export const UserRouter = Router();
 
 UserRouter.post('/signup', userController.signup);
+UserRouter.post('/login', userController.login);
 
 export default UserRouter;
