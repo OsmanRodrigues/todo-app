@@ -55,7 +55,9 @@ export class UserController {
 
       this.body = null;
     } catch (err) {
-      res.status(err.status).send({ message: err.message });
+      const { status, message } = err;
+
+      res.status(status).send({ message });
     }
   };
 
@@ -73,7 +75,9 @@ export class UserController {
 
       this.body = null;
     } catch (err) {
-      res.status(err.status).send({ message: err.message });
+      const { status, message } = err;
+
+      res.status(status).send({ message });
     }
   };
 }

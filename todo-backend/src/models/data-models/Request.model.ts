@@ -12,3 +12,7 @@ export interface SignupRequestInfos extends Credentials {
 export type LoginResquestInfos = Credentials;
 
 export type CreateTaskRequestInfos = Task;
+
+export interface UpdateTaskRequestInfos extends Task {
+  id: string;
+}
