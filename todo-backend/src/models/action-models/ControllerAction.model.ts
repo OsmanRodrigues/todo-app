@@ -1,6 +1,7 @@
 import { Response, Request } from 'express';
 
-export type ControllerAction = (
-  request: Request,
-  response: Response
-) => Promise<void>;
+type ControllerAction = (request: Request, response: Response) => Promise<void>;
+
+export type UserControllerAction = ControllerAction;
+
+export type TaskControllerAction = ControllerAction;

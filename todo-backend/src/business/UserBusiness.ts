@@ -1,5 +1,5 @@
 import { UserDatabase } from '@data/UserDatabase';
-import { BusinessAction } from '@models';
+import { UserBusinessAction } from '@models';
 import {
   LoginResquestInfos,
   SignupRequestInfos
@@ -18,7 +18,7 @@ export class UserBusiness {
     private userDatabase: UserDatabase
   ) {}
 
-  signup: BusinessAction<SignupRequestInfos> = async userDTO => {
+  signup: UserBusinessAction<SignupRequestInfos> = async userDTO => {
     const { email, name, password } = userDTO;
 
     const newId = this.idGenerator.generate();
@@ -43,7 +43,7 @@ export class UserBusiness {
     return token;
   };
 
-  login: BusinessAction<LoginResquestInfos> = async userDTO => {
+  login: UserBusinessAction<LoginResquestInfos> = async userDTO => {
     const { email, password } = userDTO;
     const databaseResult = await this.userDatabase.findUser({ email });
 

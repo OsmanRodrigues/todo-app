@@ -1,9 +1,10 @@
+import { Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 import { UserBusiness } from '@business/UserBusiness';
 import { CustomError } from '@tools/CustomError';
 import {
-  ControllerAction,
+  UserControllerAction,
   LoginResquestInfos,
   SignupRequestInfos
 } from '@models';
@@ -14,9 +15,19 @@ export class UserController {
 
   private body: SignupRequestInfos | LoginResquestInfos;
 
-  private checkRequestInfos = <InfosModel>(infos: InfosModel) => {
-    Object.keys(infos).forEach(key => {
-      const userInfo = infos[key as keyof InfosModel];
+  private checkRequestInfos = (req: Request) => {
+    const body = req.body;
+    const bodyProperties = Object.keys(body);
+
+    if (!bodyProperties.length) {
+      throw new CustomError(
+        StatusCodes.BAD_REQUEST,
+        'This request requires a body.'
+      );
+    }
+
+    Object.keys(body).forEach(key => {
+      const userInfo = body[key as keyof typeof body];
 
       if (key !== 'name' && !userInfo) {
         throw new CustomError(StatusCodes.BAD_REQUEST, `User ${key} required.`);
@@ -24,15 +35,15 @@ export class UserController {
     });
   };
 
-  signup: ControllerAction = async (req, res) => {
-    this.body = {
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password
-    };
-
+  signup: UserControllerAction = async (req, res) => {
     try {
-      this.checkRequestInfos(this.body);
+      this.checkRequestInfos(req);
+
+      this.body = {
+        name: req.body.name,
+        email: req.body.email,
+        password: req.body.password
+      };
 
       const businessValidation = await this.userBusiness.signup(this.body);
 
@@ -47,14 +58,13 @@ export class UserController {
     }
   };
 
-  login: ControllerAction = async (req, res) => {
-    this.body = {
-      email: req.body.email,
-      password: req.body.password
-    };
-
+  login: UserControllerAction = async (req, res) => {
     try {
-      this.checkRequestInfos(this.body);
+      this.checkRequestInfos(req);
+      this.body = {
+        email: req.body.email,
+        password: req.body.password
+      };
 
       const businessValidation = await this.userBusiness.login(this.body);
 

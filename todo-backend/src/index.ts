@@ -3,7 +3,7 @@ import './module-aliases-helper';
 import express from 'express';
 import { AddressInfo } from 'net';
 import { Env } from 'env-helper';
-import { UserRouter } from '@routes';
+import { TaskRouter, UserRouter } from '@routes';
 
 const app = express();
 
@@ -14,6 +14,7 @@ app.get('/', (req, res) => {
 });
 
 app.use(UserRouter);
+app.use(TaskRouter);
 
 const server = app.listen(Env.BACKEND_PORT, () => {
   if (server) {
