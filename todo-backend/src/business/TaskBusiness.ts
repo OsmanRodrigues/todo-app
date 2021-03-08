@@ -1,5 +1,9 @@
 import { TaskDatabase } from '@data/TaskDatabase';
-import { CreateTaskResponseInfos, TaskBusinessAction } from '@models';
+import {
+  CreateTaskResponseInfos,
+  GetTaskResponseInfos,
+  TaskBusinessAction
+} from '@models';
 import { TaskDTO } from '@models/data-models/Task.model';
 import { Authenticator, CustomError, IdGenerator } from '@tools';
 import { StatusCodes } from 'http-status-codes';
@@ -31,7 +35,21 @@ export class TaskBusiness {
         content: taskDTO.content || ''
       };
     } catch (err) {
-      throw new CustomError(StatusCodes.BAD_REQUEST, err.message);
+      throw new CustomError(err.status || StatusCodes.BAD_REQUEST, err.message);
+    }
+  };
+
+  get: TaskBusinessAction<GetTaskResponseInfos[]> = async getTaskDTO => {
+    const { authorization } = getTaskDTO;
+    try {
+      const token = this.authenticator.getToken(authorization);
+      const authenticationDTO = this.authenticator.getData(token);
+
+      const databaseResult = await this.taskDatabase.get(authenticationDTO);
+
+      return databaseResult;
+    } catch (err) {
+      throw new CustomError(err.status || StatusCodes.BAD_REQUEST, err.message);
     }
   };
 }

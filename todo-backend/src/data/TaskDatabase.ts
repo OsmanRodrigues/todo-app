@@ -1,3 +1,4 @@
+import { AuthenticationData, GetTaskResponseInfos, UserDTO } from '@models';
 import { TaskDatabaseAction } from '@models/action-models/DatabaseAction.model';
 import { TaskDTO } from '@models/data-models/Task.model';
 import { BaseDatabase } from '@services/BaseDatabase';
@@ -24,6 +25,27 @@ export class TaskDatabase extends BaseDatabase {
         .into(this.taskTableName);
 
       await this.destroyConnection();
+    } catch (err) {
+      throw new CustomError(
+        StatusCodes.INTERNAL_SERVER_ERROR,
+        'Failed to create task.'
+      );
+    }
+  };
+
+  get: TaskDatabaseAction<
+    AuthenticationData,
+    GetTaskResponseInfos[]
+  > = async authenticationDTO => {
+    const { id } = authenticationDTO;
+    try {
+      const record: GetTaskResponseInfos[] = await this.getConnection()
+        .select('id', 'title', 'content', 'list')
+        .from(this.taskTableName)
+        .where('owner_id', '=', id);
+      await this.destroyConnection();
+
+      return record;
     } catch (err) {
       throw new CustomError(
         StatusCodes.INTERNAL_SERVER_ERROR,

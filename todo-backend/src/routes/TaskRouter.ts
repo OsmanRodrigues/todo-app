@@ -7,3 +7,4 @@ const taskController = Container.get(TaskController);
 export const TaskRouter = Router();
 
 TaskRouter.post('/cards', taskController.create);
+TaskRouter.get('/cards', taskController.get);

@@ -1,6 +1,6 @@
 import { TaskBusinessDTO } from '../data-models/Business.model';
 
-type Token = { token: string };
+export type Token = { token: string };
 
 type BusinessAction<DTOType, ReturnType> = (
   DTO: DTOType
