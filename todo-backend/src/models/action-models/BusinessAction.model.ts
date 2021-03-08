@@ -1,3 +1,3 @@
 type Token = { token: string };
 
-export type BusinessAction<DTOType> = (dto: DTOType) => Promise<Token>;
+export type BusinessAction<DTOType> = (DTO: DTOType) => Promise<Token>;

@@ -1,6 +1,8 @@
 import { UserDatabase } from '@data/UserDatabase';
+import { BusinessAction, FindUserDTO } from '@models';
 import { SignupRequestBody } from '@models/data-models/Request.model';
-import { Authenticator, HashManager, IdGenerator } from '@tools';
+import { Authenticator, CustomError, HashManager, IdGenerator } from '@tools';
+import { StatusCodes } from 'http-status-codes';
 
 import { Service } from 'typedi';
 
@@ -13,13 +15,29 @@ export class UserBusiness {
     private userDatabase: UserDatabase
   ) {}
 
-  signup = async (body: SignupRequestBody): Promise<{ token: string }> => {
+  private checkIfUserAlreadyExists = async (param: FindUserDTO) => {
+    const databaseResult = await this.userDatabase.findUser(param);
+
+    if (databaseResult.length) {
+      throw new CustomError(
+        StatusCodes.NOT_ACCEPTABLE,
+        'User e-mail or id already used.'
+      );
+    }
+  };
+
+  signup: BusinessAction<SignupRequestBody> = async userDTO => {
+    const { email, name, password } = userDTO;
+
     const newId = this.idGenerator.generate();
-    const hashedPassword = await this.hashManager.hash(body.password);
+    const hashedPassword = await this.hashManager.hash(password);
+
+    await this.checkIfUserAlreadyExists({ email });
+
     const authenticationData = await this.userDatabase.createUser({
       id: newId,
-      name: body.name,
-      email: body.email,
+      name,
+      email,
       password: hashedPassword
     });
     const token = this.authenticator.generateToken(authenticationData);

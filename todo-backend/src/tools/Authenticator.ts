@@ -7,16 +7,16 @@ const { ACC_TOKEN_EXPIRES_IN, JWT_KEY } = Env;
 
 @Service()
 export class Authenticator {
-  public generateToken(
+  generateToken = (
     data: AuthenticationData,
     expiresIn: string = ACC_TOKEN_EXPIRES_IN
-  ): { token: string } {
+  ): { token: string } => {
     const token = jwt.sign({ id: data.id }, JWT_KEY, { expiresIn });
 
     return { token: `Bearer ${token}` };
-  }
+  };
 
-  public getData(token: string): AuthenticationData {
+  getData = (token: string): AuthenticationData => {
     const payload = jwt.verify(token, JWT_KEY) as AuthenticationData;
     const result = {
       id: payload.id,
@@ -24,7 +24,7 @@ export class Authenticator {
       email: payload.email
     };
     return result;
-  }
+  };
 
   checkToken(token: string): void {
     try {

@@ -8,7 +8,7 @@ import { ControllerAction, SignupRequestBody } from '@models';
 export class UserController {
   constructor(private userBusiness: UserBusiness) {}
 
-  signup: ControllerAction = async (req, res): Promise<void> => {
+  signup: ControllerAction = async (req, res) => {
     const body: SignupRequestBody = {
       name: req.body.name,
       email: req.body.email,
@@ -34,7 +34,7 @@ export class UserController {
         token: businessValidation.token
       });
     } catch (err) {
-      res.status(StatusCodes.BAD_REQUEST).send({ message: err.message });
+      res.status(err.status).send({ message: err.message });
     }
   };
 }
