@@ -31,7 +31,7 @@ export class TaskBusiness {
         content: taskDTO.content || ''
       };
     } catch (err) {
-      throw new CustomError(400, err.message);
+      throw new CustomError(StatusCodes.BAD_REQUEST, err.message);
     }
   };
 }
