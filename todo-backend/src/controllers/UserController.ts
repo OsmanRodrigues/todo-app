@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 import { UserBusiness } from '@business/UserBusiness';
@@ -15,8 +14,9 @@ export class UserController {
 
   private body: SignupRequestInfos | LoginResquestInfos;
 
-  private checkRequestInfos = (req: Request) => {
-    const body = req.body;
+  private checkRequestInfos = (
+    body: SignupRequestInfos | LoginResquestInfos
+  ) => {
     const bodyProperties = Object.keys(body);
 
     if (!bodyProperties.length) {
@@ -37,13 +37,12 @@ export class UserController {
 
   signup: UserControllerAction = async (req, res) => {
     try {
-      this.checkRequestInfos(req);
-
       this.body = {
         name: req.body.name,
         email: req.body.email,
         password: req.body.password
       };
+      this.checkRequestInfos(this.body);
 
       const businessValidation = await this.userBusiness.signup(this.body);
 
@@ -53,6 +52,8 @@ export class UserController {
         } successfully created!`,
         token: businessValidation.token
       });
+
+      this.body = null;
     } catch (err) {
       res.status(err.status).send({ message: err.message });
     }
@@ -60,15 +61,17 @@ export class UserController {
 
   login: UserControllerAction = async (req, res) => {
     try {
-      this.checkRequestInfos(req);
       this.body = {
         email: req.body.email,
         password: req.body.password
       };
+      this.checkRequestInfos(this.body);
 
       const businessValidation = await this.userBusiness.login(this.body);
 
       res.status(StatusCodes.OK).send({ token: businessValidation.token });
+
+      this.body = null;
     } catch (err) {
       res.status(err.status).send({ message: err.message });
     }
