@@ -4,22 +4,18 @@ import { Service } from 'typedi';
 import { AuthenticationData, FindUserDTO, UserDTO } from '@models';
 import { BaseDatabase } from '@services/BaseDatabase';
 import { CustomError } from '@tools/CustomError';
-import { DatabaseAction } from '@models/action-models/DatabaseAction.model';
+import { UserDatabaseAction } from '@models/action-models/DatabaseAction.model';
 
 @Service()
 export class UserDatabase extends BaseDatabase {
   private userTableName = Env.USER_TABLE_NAME;
 
-  createUser: DatabaseAction<UserDTO, AuthenticationData> = async userDTO => {
+  createUser: UserDatabaseAction<
+    UserDTO,
+    AuthenticationData
+  > = async userDTO => {
     try {
-      await this.getConnection()
-        .insert({
-          id: userDTO.id,
-          name: userDTO.name,
-          email: userDTO.email,
-          password: userDTO.password
-        })
-        .into(this.userTableName);
+      await this.getConnection().insert(userDTO).into(this.userTableName);
 
       await this.destroyConnection();
 
@@ -38,7 +34,7 @@ export class UserDatabase extends BaseDatabase {
     }
   };
 
-  findUser: DatabaseAction<FindUserDTO, UserDTO[]> = async userDTO => {
+  findUser: UserDatabaseAction<FindUserDTO, UserDTO[]> = async userDTO => {
     const { id, email } = userDTO;
     const queryField = id ? 'id' : 'email';
     const fieldValue = id || email;
