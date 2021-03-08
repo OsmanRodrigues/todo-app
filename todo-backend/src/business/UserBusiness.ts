@@ -1,8 +1,7 @@
 import { UserDatabase } from '@data/UserDatabase';
 import { SignupRequestBody } from '@models/data-models/Request.model';
-import { Authenticator } from '@tools/Authenticator';
-import { HashManager } from '@tools/HashManager';
-import { IdGenerator } from '@tools/IdGenerator';
+import { Authenticator, HashManager, IdGenerator } from '@tools';
+
 import { Service } from 'typedi';
 
 @Service()

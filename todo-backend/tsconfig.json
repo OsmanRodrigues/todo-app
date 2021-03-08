@@ -23,9 +23,12 @@
       "@data/*": ["data/*"],
       "env-helper": ["env-helper"],
       "@entities/*": ["entities/*"],
+      "@models": ["models"],
       "@models/*": ["models/*"],
+      "@routes": ["routes"],
       "@routes/*": ["routes/*"],
       "@services/*": ["services/*"],
+      "@tools": ["tools"],
       "@tools/*": ["tools/*"]
     }
   },

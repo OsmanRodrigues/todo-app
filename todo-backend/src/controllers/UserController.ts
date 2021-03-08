@@ -1,15 +1,14 @@
-import { Response, Request } from 'express';
-import { SignupRequestBody } from '@models/data-models/Request.model';
-import { UserBusiness } from '@business/UserBusiness';
 import { StatusCodes } from 'http-status-codes';
-import { CustomError } from '@tools/CustomError';
 import { Service } from 'typedi';
+import { UserBusiness } from '@business/UserBusiness';
+import { CustomError } from '@tools/CustomError';
+import { ControllerAction, SignupRequestBody } from '@models';
 
 @Service()
 export class UserController {
   constructor(private userBusiness: UserBusiness) {}
 
-  signup = async (req: Request, res: Response): Promise<void> => {
+  signup: ControllerAction = async (req, res): Promise<void> => {
     const body: SignupRequestBody = {
       name: req.body.name,
       email: req.body.email,
@@ -28,11 +27,11 @@ export class UserController {
         }
       });
 
-      const businessResponse = await this.userBusiness.signup(body);
+      const businessValidation = await this.userBusiness.signup(body);
 
       res.status(StatusCodes.CREATED).send({
         message: `User ${body.name || body.email} successfully created!`,
-        token: businessResponse.token
+        token: businessValidation.token
       });
     } catch (err) {
       res.status(StatusCodes.BAD_REQUEST).send({ message: err.message });

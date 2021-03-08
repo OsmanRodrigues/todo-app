@@ -2,8 +2,8 @@ import 'reflect-metadata';
 import './module-aliases-helper';
 import express from 'express';
 import { AddressInfo } from 'net';
-import UserRouter from '@routes/UserRoutes';
 import { Env } from 'env-helper';
+import { UserRouter } from '@routes';
 
 const app = express();
 

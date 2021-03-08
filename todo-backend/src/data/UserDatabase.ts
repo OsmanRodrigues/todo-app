@@ -1,10 +1,9 @@
-import { UserSignupDTO } from '@models/data-models/User.model';
-import { AuthenticationData } from '@models/tools-models';
-import { BaseDatabase } from '@services/BaseDatabase';
-import { CustomError } from '@tools/CustomError';
 import { Env } from 'env-helper';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
+import { AuthenticationData, UserSignupDTO } from '@models';
+import { BaseDatabase } from '@services/BaseDatabase';
+import { CustomError } from '@tools/CustomError';
 
 @Service()
 export class UserDatabase extends BaseDatabase {
