@@ -119,7 +119,7 @@ export class TaskController {
       if (!id) {
         throw new CustomError(
           StatusCodes.BAD_REQUEST,
-          'Missing a task id param.'
+          'Missing a card id param.'
         );
       }
 
@@ -130,6 +130,39 @@ export class TaskController {
       });
 
       res.status(StatusCodes.OK).send({ updatedTask });
+
+      this.body = null;
+      this.headers = null;
+    } catch (err) {
+      const { status, message } = err;
+
+      res.status(status).send({ message });
+    }
+  };
+
+  delete: TaskControllerAction = async (req, res) => {
+    try {
+      this.headers = req.headers;
+      this.checkRequestInfos({ headers: this.headers });
+
+      const { id } = req.params;
+      if (!id) {
+        throw new CustomError(
+          StatusCodes.BAD_REQUEST,
+          'Missing a card id param.'
+        );
+      }
+
+      await this.taskBusiness.delete({
+        authorization: this.headers.authorization,
+        taskId: id
+      });
+
+      res
+        .status(StatusCodes.OK)
+        .send({ message: 'Card successfully deleted.' });
+
+      this.headers = null;
     } catch (err) {
       const { status, message } = err;
 
