@@ -1,18 +1,18 @@
 {
   "name": "todo-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "todo app backend",
   "main": "index.js",
   "scripts": {
     "check-types": "tsc --noEmit",
     "lint": "eslint 'src/**/*.{ts,tsx}' && npm run check-types",
-    "start": "npm run lint && ts-node ./src/index.ts",
+    "start": "ts-node ./src/index.ts",
     "start:dev": "npm run lint && nodemon ./src/index.ts",
     "docker:build": "docker build -t todo-backend/dockernode .",
     "docker:start": "docker run -p 5000:5000 -d todo-backend/dockernode"
   },
   "keywords": [],
-  "author": "",
+  "author": "Osman Rodrigues",
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",

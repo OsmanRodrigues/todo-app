@@ -9,10 +9,6 @@ const app = express();
 
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.send({ message: 'Test one!!!' });
-});
-
 app.use(UserRouter);
 app.use(TaskRouter);
 

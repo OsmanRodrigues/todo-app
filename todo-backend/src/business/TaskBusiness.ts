@@ -2,9 +2,10 @@ import { TaskDatabase } from '@data/TaskDatabase';
 import {
   TaskResponseInfos,
   TaskBusinessAction,
-  UpdateTaskRequestInfos
+  UpdateTaskRequestInfos,
+  TaskDTO,
+  LIST
 } from '@models';
-import { LIST, TaskDTO } from '@models/data-models/Task.model';
 import { Authenticator, CustomError, IdGenerator } from '@tools';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';

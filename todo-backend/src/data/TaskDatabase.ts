@@ -1,10 +1,10 @@
 import {
   AuthenticationData,
   DeleteTaskRequestInfos,
+  TaskDatabaseAction,
+  TaskDTO,
   TaskResponseInfos
 } from '@models';
-import { TaskDatabaseAction } from '@models/action-models/DatabaseAction.model';
-import { TaskDTO } from '@models/data-models/Task.model';
 import { BaseDatabase } from '@services/BaseDatabase';
 import { CustomError } from '@tools';
 import { Env } from 'env-helper';

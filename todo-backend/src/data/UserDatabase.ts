@@ -1,10 +1,14 @@
 import { Env } from 'env-helper';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
-import { AuthenticationData, FindUserDTO, UserDTO } from '@models';
+import {
+  AuthenticationData,
+  FindUserDTO,
+  UserDatabaseAction,
+  UserDTO
+} from '@models';
 import { BaseDatabase } from '@services/BaseDatabase';
 import { CustomError } from '@tools/CustomError';
-import { UserDatabaseAction } from '@models/action-models/DatabaseAction.model';
 
 @Service()
 export class UserDatabase extends BaseDatabase {
