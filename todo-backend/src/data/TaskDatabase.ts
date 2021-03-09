@@ -1,4 +1,8 @@
-import { AuthenticationData, TaskResponseInfos } from '@models';
+import {
+  AuthenticationData,
+  DeleteTaskRequestInfos,
+  TaskResponseInfos
+} from '@models';
 import { TaskDatabaseAction } from '@models/action-models/DatabaseAction.model';
 import { TaskDTO } from '@models/data-models/Task.model';
 import { BaseDatabase } from '@services/BaseDatabase';
@@ -11,9 +15,9 @@ import { Service } from 'typedi';
 export class TaskDatabase extends BaseDatabase {
   private taskTableName = Env.TASK_TABLE_NAME;
 
-  create: TaskDatabaseAction<TaskDTO, void> = async taskDTO => {
+  create: TaskDatabaseAction<TaskDTO, void> = async createTaskDTO => {
     try {
-      const { id, list, ownerId, title, content } = taskDTO;
+      const { id, list, ownerId, title, content } = createTaskDTO;
       await this.getConnection()
         .insert({
           id,
@@ -28,7 +32,7 @@ export class TaskDatabase extends BaseDatabase {
     } catch (err) {
       throw new CustomError(
         StatusCodes.INTERNAL_SERVER_ERROR,
-        'Failed to create task.'
+        'Failed to create card.'
       );
     }
   };
@@ -49,23 +53,45 @@ export class TaskDatabase extends BaseDatabase {
     } catch (err) {
       throw new CustomError(
         StatusCodes.INTERNAL_SERVER_ERROR,
-        'Failed to get task list.'
+        'Failed to get card list.'
       );
     }
   };
 
-  update: TaskDatabaseAction<TaskDTO, void> = async taskDTO => {
-    const { id, list, title, content, ownerId } = taskDTO;
+  update: TaskDatabaseAction<TaskDTO, number> = async updateTaskDTO => {
+    const { id, list, title, content, ownerId } = updateTaskDTO;
     try {
       const connection = this.getConnection();
 
-      await connection(this.taskTableName)
+      const result = await connection(this.taskTableName)
         .update({ id, list, title, content })
         .where({ id, owner_id: ownerId });
 
       await this.destroyConnection();
+
+      return result;
     } catch (err) {
-      throw new CustomError(StatusCodes.NOT_MODIFIED, 'Failed to update task.');
+      throw new CustomError(StatusCodes.NOT_MODIFIED, 'Failed to update card.');
+    }
+  };
+
+  delete: TaskDatabaseAction<
+    DeleteTaskRequestInfos,
+    number
+  > = async deleteTaskDTO => {
+    const { id, ownerId } = deleteTaskDTO;
+    try {
+      const connection = this.getConnection();
+
+      const result = await connection(this.taskTableName)
+        .delete()
+        .where({ id, owner_id: ownerId });
+
+      await this.destroyConnection();
+
+      return result;
+    } catch (err) {
+      throw new CustomError(StatusCodes.NOT_MODIFIED, 'Failed to delete card.');
     }
   };
 }

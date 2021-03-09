@@ -76,12 +76,33 @@ export class TaskBusiness {
     try {
       const authenticationDTO = this.authorizationCheck(authorization);
 
-      await this.taskDatabase.update({
+      const databaseResult = await this.taskDatabase.update({
         ...taskInfos,
         ownerId: authenticationDTO.id
       });
 
+      if (!databaseResult) {
+        throw new CustomError(StatusCodes.NOT_FOUND, 'Card not found.');
+      }
+
       return taskInfos;
+    } catch (err) {
+      throw new CustomError(err.status || StatusCodes.BAD_REQUEST, err.message);
+    }
+  };
+
+  delete: TaskBusinessAction<void> = async deleteTaskDTO => {
+    const { taskId, authorization } = deleteTaskDTO;
+    try {
+      const authenticationDTO = this.authorizationCheck(authorization);
+      const databaseResult = await this.taskDatabase.delete({
+        id: taskId,
+        ownerId: authenticationDTO.id
+      });
+
+      if (!databaseResult) {
+        throw new CustomError(StatusCodes.NOT_FOUND, 'Card not found.');
+      }
     } catch (err) {
       throw new CustomError(err.status || StatusCodes.BAD_REQUEST, err.message);
     }

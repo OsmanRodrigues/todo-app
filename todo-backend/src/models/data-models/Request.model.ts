@@ -16,3 +16,8 @@ export type CreateTaskRequestInfos = Task;
 export interface UpdateTaskRequestInfos extends Task {
   id: string;
 }
+
+export interface DeleteTaskRequestInfos {
+  id: string;
+  ownerId: string;
+}

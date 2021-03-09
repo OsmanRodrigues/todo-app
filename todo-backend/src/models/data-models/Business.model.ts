@@ -6,4 +6,5 @@ import {
 export interface TaskBusinessDTO {
   authorization: string;
   taskInfos?: UpdateTaskRequestInfos | CreateTaskRequestInfos;
+  taskId?: string;
 }
