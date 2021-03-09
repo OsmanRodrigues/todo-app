@@ -1,9 +1,9 @@
 import { UserDatabase } from '@data/UserDatabase';
-import { UserBusinessAction } from '@models';
 import {
   LoginResquestInfos,
-  SignupRequestInfos
-} from '@models/data-models/Request.model';
+  SignupRequestInfos,
+  UserBusinessAction
+} from '@models';
 import { Authenticator, CustomError, HashManager, IdGenerator } from '@tools';
 import { StatusCodes } from 'http-status-codes';
 
