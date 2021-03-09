@@ -5,14 +5,17 @@ import {
   TaskControllerAction,
   UpdateTaskRequestInfos
 } from '@models';
-import { CustomError } from '@tools';
+import { CustomError, LogRecorder } from '@tools';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 import { IncomingHttpHeaders } from 'node:http2';
 
 @Service()
 export class TaskController {
-  constructor(private taskBusiness: TaskBusiness) {}
+  constructor(
+    private taskBusiness: TaskBusiness,
+    private logRecorder: LogRecorder
+  ) {}
 
   private body: Task | UpdateTaskRequestInfos;
   private headers: IncomingHttpHeaders;
@@ -131,6 +134,9 @@ export class TaskController {
 
       res.status(StatusCodes.OK).send({ updatedTask });
 
+      this.logRecorder.generate(
+        `Card ${updatedTask.id} - ${updatedTask.title} - Updated`
+      );
       this.body = null;
       this.headers = null;
     } catch (err) {
@@ -162,6 +168,7 @@ export class TaskController {
         .status(StatusCodes.OK)
         .send({ message: 'Card successfully deleted.' });
 
+      this.logRecorder.generate(`Card ${id} - Deleted`);
       this.headers = null;
     } catch (err) {
       const { status, message } = err;
