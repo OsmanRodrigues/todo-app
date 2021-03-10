@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.1.1",
+    "axios": "^0.21.1",
     "patch-package": "^6.4.6",
     "postinstall-postinstall": "^2.1.0",
     "react": "^17.0.1",

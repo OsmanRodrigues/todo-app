@@ -2,7 +2,8 @@
 FROM node:12.19-alpine as build
 WORKDIR /todo-frontend
 ENV PATH /todo-frontend/node_modules/.bin:$PATH
-COPY ["patches/*","package.json", "yarn.lock", "./"]
+COPY ["package.json", "yarn.lock", "./"]
+ADD patches/react-scripts+4.0.3.patch ./
 RUN yarn install
 COPY . .
 RUN yarn build

@@ -11,8 +11,8 @@ import {
   buttonRawStyle,
   ColumnGap,
   ZIndex
-} from '@styles/constants';
-import { CardActions, CardDTO } from '@models';
+} from '../styles/constants';
+import { CardActions, CardDTO } from '../models';
 
 interface CardProps extends CardActions {
   cardInfos: CardDTO;
@@ -120,6 +120,8 @@ const Card: React.FC<CardProps> = ({
 
 export const Kanban = {
   Card,
+  CardActionArea,
+  CardActionButton,
   List,
   View
 };

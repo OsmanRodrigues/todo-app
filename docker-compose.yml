@@ -1,29 +1,29 @@
 version: '3'
 
 services:
-  # todo-db:
-  #   container_name: 'todo-db'
-  #   build: ./todo-data
-  #   environment:
-  #     - POSTGRES_DB=${DATABASE_NAME}
-  #     - POSTGRES_USER=${DATABASE_USER}
-  #     - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
-  #   restart: always
-  #   volumes:
-  #     - 'todo-data:/var/lib/postgresql/data'
-  #   ports:
-  #     - '${DATABASE_PORT}:${DATABASE_PORT}'
+  todo-db:
+    container_name: 'todo-db'
+    build: ./todo-data
+    environment:
+      - POSTGRES_DB=${DATABASE_NAME}
+      - POSTGRES_USER=${DATABASE_USER}
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+    restart: always
+    volumes:
+      - 'todo-data:/var/lib/postgresql/data'
+    ports:
+      - '${DATABASE_PORT}:${DATABASE_PORT}'
 
-  # todo-backend:
-  #   container_name: 'todo-backend'
-  #   build: ./todo-backend
-  #   command: npm start
-  #   environment:
-  #     - DATABASE_HOST=todo-db #This env variable change in order to connect with todo-db container
-  #   ports:
-  #     - '${BACKEND_PORT}:${BACKEND_PORT}'
-  #   links:
-  #     - todo-db
+  todo-backend:
+    container_name: 'todo-backend'
+    build: ./todo-backend
+    command: npm start
+    environment:
+      - DATABASE_HOST=todo-db #This env variable change in order to connect with todo-db container
+    ports:
+      - '${BACKEND_PORT}:${BACKEND_PORT}'
+    links:
+      - todo-db
 
   todo-frontend:
     container_name: 'todo-frontend'
@@ -32,8 +32,8 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - '${FRONTEND_PORT}:80'
-    # links:
-    #   - todo-backend
+    links:
+      - todo-backend
 
 volumes:
   todo-data:
