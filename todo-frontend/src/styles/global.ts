@@ -18,5 +18,6 @@ export default createGlobalStyle`
     &:hover{
       color:  ${({ theme }) => theme.colors.acessory};
     }
+
   }
 `;
