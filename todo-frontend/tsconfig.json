@@ -19,7 +19,9 @@
     "baseUrl": "./src",
     "paths": {
       "@components": ["components"],
-      "@components/*": ["components/*"]
+      "@components/*": ["components/*"],
+      "@styles": ["styles"],
+      "@styles/*": ["styles/*"]
     }
   },
   "include": ["src"]
