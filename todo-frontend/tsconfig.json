@@ -20,6 +20,8 @@
     "paths": {
       "@components": ["components"],
       "@components/*": ["components/*"],
+      "@models": ["models"],
+      "@models/*": ["models/*"],
       "@styles": ["styles"],
       "@styles/*": ["styles/*"]
     }

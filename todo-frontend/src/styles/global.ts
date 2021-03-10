@@ -12,12 +12,15 @@ export default createGlobalStyle`
     font-family: ${({ theme: { typography } }) =>
       `${typography.font}, ${typography.family}`};
   }
+  h1, h2, h3, h4, h5{
+    color: ${({ theme }) => theme.colors.primary};
+  }
   a{
     color: ${({ theme }) => theme.colors.secondary};
     text-decoration: none;
     &:hover{
       color:  ${({ theme }) => theme.colors.acessory};
-    }
+  }
 
   }
 `;

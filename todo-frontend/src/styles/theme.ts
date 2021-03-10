@@ -9,7 +9,7 @@ const theme = {
     link: PalleteColor.Gray,
     primary: PalleteColor.Primary,
     secondary: PalleteColor.Secondary,
-    text: PalleteColor.Primary,
+    text: PalleteColor.Black,
     title: PalleteColor.Gray
   },
   typography: {
