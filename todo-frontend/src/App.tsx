@@ -6,98 +6,37 @@ import {
   H2,
   HDisplay,
   Kanban,
+  Modal,
+  UserActionForm,
   VerticalSeparator
 } from '@components';
-import { Card, CardDTO, LIST } from '@models';
-import { Modal } from '@components/modal';
+import { Card, CardDTO, LIST, User } from '@models';
 import { useForm } from '@hooks/use-form';
 import { api } from '@data/api';
-
-const CardInfo = {
-  id: '510cc268-e2bb-4690-abb0-f49e18e9d55b',
-  title: 'My hendrix task one',
-  content: 'my today task',
-  list: 'DONE'
-};
-
-const CardListN = Array.from({ length: 3 }).map((item, index) => ({
-  ...CardInfo,
-  id: CardInfo.id + index + 'N',
-  list: 'NEW'
-}));
-const CardListT = Array.from({ length: 3 }).map((item, index) => ({
-  ...CardInfo,
-  id: CardInfo.id + index + 'T',
-  list: 'TODO'
-}));
-const CardListD = Array.from({ length: 3 }).map((item, index) => ({
-  ...CardInfo,
-  id: CardInfo.id + index + 'D',
-  list: 'DOING'
-}));
-const CardListDn = Array.from({ length: 3 }).map((item, index) => ({
-  ...CardInfo,
-  id: CardInfo.id + index + 'Dn',
-  list: 'DONE'
-}));
-
-const generalList = [
-  ...CardListD,
-  ...CardListDn,
-  ...CardListN,
-  ...CardListT
-] as CardDTO[];
-
-const filterListHelper = (list: CardDTO[], listName: keyof typeof LIST) => {
-  return list.filter(card => card.list === listName);
-};
-const moveCardHelper = (
-  cardToMove: CardDTO,
-  cardList: CardDTO[],
-  currentListIndex: number,
-  target: 'previous' | 'next'
-) => {
-  const newListIndex =
-    target === 'previous' ? currentListIndex - 1 : currentListIndex + 1;
-  const cardUpdated = { ...cardToMove, list: LIST[newListIndex] } as CardDTO;
-  const filteredList = cardList.filter(card => card.id !== cardToMove.id);
-  const newList = [cardUpdated, ...filteredList];
-
-  return newList;
-};
+import { useLocalState } from '@hooks/use-local-state';
+import { filterListHelper, moveCardHelper } from '@tools';
 
 const App: React.FC = (): JSX.Element => {
-  React.useEffect(() => {
-    // const bodyUser = { email: 'hendrix@jimmy.com', password: 'hendrix1234' };
-    // const bodyCard: Card = {
-    //   title: 'Hendrix task 4',
-    //   content: 'my today task 4',
-    //   list: 'NEW'
-    // };
-    // const bodyUpdateCard: Card = {
-    //   title: 'Hendrix task 4',
-    //   content: 'my today task 4',
-    //   list: 'TODO'
-    // };
-    // const cardId = 'e6d8f6a7-5826-4e02-97d1-7f6ee0ca58de';
-    // const token =
-    //   'Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQzNDBmNzM1LTZjYjMtNGRhZC1hMTE5LWU0Yjg2MDlkMjAxZiIsImlhdCI6MTYxNTM5MzE3NSwiZXhwIjoxNjE1Mzk2Nzc1fQ.e5vSoUAEKdmjH1djUOqbxFzC00K2cpya7povGYouVdk';
-    // api
-    //   .getCardList(token)
-    //   .then(response => {
-    //     console.log(response.data.tasks);
-    //   })
-    //   .catch(err => console.log(err));
-  }, []);
+  const { updateLocalState, getLocalState } = useLocalState<{
+    token: string | null;
+  }>({
+    token: null
+  });
+  const [showUserModal, setShowUserModal] = React.useState(false);
+  const [showFormModal, setShowFormModal] = React.useState(false);
 
+  const {
+    value: userInfos,
+    handleChange: onUserInfosChange,
+    handleSetValue: handleSetUserValue
+  } = useForm<User>();
   const {
     value: cardInfos,
     handleChange: onCardInfosChange,
-    handleSetValue
+    handleSetValue: handleSetCardValue
   } = useForm<Card>();
 
-  const [showModal, setShowModal] = React.useState(false);
-  const [cardList, setCardList] = React.useState(generalList);
+  const [cardList, setCardList] = React.useState<CardDTO[]>([]);
 
   const newList = filterListHelper(cardList, 'NEW');
   const todoList = filterListHelper(cardList, 'TODO');
@@ -105,9 +44,41 @@ const App: React.FC = (): JSX.Element => {
   const doneList = filterListHelper(cardList, 'DONE');
 
   const handleCancelAction = () => {
-    setShowModal(false);
-    handleSetValue(null);
+    setShowUserModal(false);
+    setShowFormModal(false);
+
+    handleSetUserValue(null);
+    handleSetCardValue(null);
   };
+
+  const handleLoginSignupSubmit = () => {
+    api
+      .login(userInfos)
+      .then(response => {
+        console.log(response);
+        updateLocalState({ token: response.data.token }, 'token');
+        handleCancelAction();
+      })
+      .catch(err => {
+        console.log('Usu');
+        console.log(err.code);
+        api
+          .signup(userInfos)
+          .then(response => {
+            updateLocalState({ token: response.data.token }, 'token');
+            handleCancelAction();
+          })
+          .catch(err => {
+            console.log(err.message);
+            window.alert(
+              `Não foi possível realizar a solicitação. Erro: ${err.message}`
+            );
+          });
+      });
+
+    handleCancelAction();
+  };
+
   const handleCreateSubmit = () => {
     const cardDTO: Card = { ...cardInfos, list: 'NEW' };
     // confirm request
@@ -115,8 +86,8 @@ const App: React.FC = (): JSX.Element => {
   };
 
   const handleEdit = (card: CardDTO) => {
-    handleSetValue(card);
-    setShowModal(true);
+    handleSetCardValue(card);
+    setShowFormModal(true);
   };
   const handleDelete = (cardToDelete: CardDTO) => {
     if (
@@ -149,9 +120,34 @@ const App: React.FC = (): JSX.Element => {
     setCardList(newList);
   };
 
+  React.useEffect(() => {
+    const checkedLocalState = getLocalState('token');
+    if (checkedLocalState?.token) {
+      api
+        .getCardList(checkedLocalState.token)
+        .then(response => setCardList(response.data.tasks))
+        .catch(err => {
+          console.log(err.message);
+
+          window.alert(
+            'Não foi possíve carregar a lista de cartões. Tente recarregar a página.'
+          );
+        });
+    } else {
+      setShowUserModal(true);
+    }
+  }, []);
+  console.log(showUserModal);
   return (
     <Container>
-      <Modal visible={showModal} centerAll={true}>
+      <Modal visible={showUserModal} centerAll={true}>
+        <UserActionForm
+          userInfos={userInfos}
+          onInfosSubmit={handleLoginSignupSubmit}
+          onInfosChange={onUserInfosChange}
+        />
+      </Modal>
+      <Modal visible={showFormModal} centerAll={true}>
         <CardActionForm
           cardInfos={cardInfos}
           onInfosSubmit={handleCreateSubmit}
@@ -170,7 +166,7 @@ const App: React.FC = (): JSX.Element => {
             <Kanban.List>
               <H2>
                 New
-                <Kanban.CardActionButton onClick={() => setShowModal(true)}>
+                <Kanban.CardActionButton onClick={() => setShowFormModal(true)}>
                   <FaPlus />
                 </Kanban.CardActionButton>
               </H2>

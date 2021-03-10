@@ -5,7 +5,6 @@ import { Form, Frame, H2 } from './shared';
 interface UserActionFormProps {
   onInfosSubmit: () => void;
   onInfosChange: React.ChangeEventHandler<HTMLInputElement>;
-  cancelHandler: () => void;
   userInfos?: User | Record<string, string>;
 }
 
