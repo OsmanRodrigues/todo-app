@@ -1,4 +1,4 @@
-import { CardDTO, LIST } from '@models';
+import { CardDTO, LIST } from '../models';
 
 export const filterListHelper = (
   list: CardDTO[],

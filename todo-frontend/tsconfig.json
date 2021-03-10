@@ -15,7 +15,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "rootDir": ".",
+    "rootDir": "./src",
     "baseUrl": "./src",
     "paths": {
       "@components": ["components"],

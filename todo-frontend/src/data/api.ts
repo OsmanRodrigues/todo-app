@@ -6,7 +6,7 @@ import {
   GetCardList,
   UpdatedCard,
   User
-} from '@models';
+} from '../models';
 import axios from 'axios';
 
 const service = axios.create({

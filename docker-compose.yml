@@ -25,15 +25,15 @@ services:
     links:
       - todo-db
 
-  # todo-frontend:
-  #   container_name: 'todo-frontend'
-  #   build:
-  #     context: ./todo-frontend
-  #     dockerfile: ./Dockerfile
-  #   ports:
-  #     - '${FRONTEND_PORT}:80'
-  #   # links:
-  #   #   - todo-backend
+  todo-frontend:
+    container_name: 'todo-frontend'
+    build:
+      context: ./todo-frontend
+      dockerfile: ./Dockerfile
+    ports:
+      - '${FRONTEND_PORT}:80'
+    links:
+      - todo-backend
 
 volumes:
   todo-data:

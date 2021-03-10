@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from 'styled-components';
-import { buttonRawStyle, ColumnGap } from '@styles';
+import { buttonRawStyle, ColumnGap } from '../styles';
 
 export const HDisplay = styled.h1`
   text-align: center;
@@ -42,13 +42,9 @@ const Button = styled.button`
 const Label = styled.label``;
 
 export interface FormProps {
-  onSubmit: (data: React.FormEvent<HTMLFormElement>) => void;
+  submitHandler: React.FormEventHandler<HTMLFormElement>;
 }
-export const Container: React.FC<FormProps> = ({ children, onSubmit }) => {
-  const submitHandler: React.FormEventHandler<HTMLFormElement> = event => {
-    event.preventDefault();
-    onSubmit(event);
-  };
+export const Container: React.FC<FormProps> = ({ children, submitHandler }) => {
   return <FormWrapper onSubmit={submitHandler}>{children}</FormWrapper>;
 };
 

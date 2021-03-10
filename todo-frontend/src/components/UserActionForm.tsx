@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { User } from '@models';
+import { User } from '../models';
 import { Form, Frame, H2 } from './shared';
 
 interface UserActionFormProps {
@@ -16,7 +16,7 @@ export const UserActionForm: React.FC<UserActionFormProps> = ({
   return (
     <Frame>
       <H2>{'Login/Signup'}</H2>
-      <Form.Container onSubmit={onInfosSubmit}>
+      <Form.Container submitHandler={onInfosSubmit}>
         <Form.Label>{'E-mail'}</Form.Label>
         <Form.Input
           onChange={onInfosChange}

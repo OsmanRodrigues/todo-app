@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { Col, Container, Row } from 'react-grid-system';
 import { FaPlus } from 'react-icons/fa';
+
+import { Card, CardDTO, LIST } from './models';
+import { api } from './data/api';
+import { filterListHelper, moveCardHelper } from './tools';
 import {
-  CardActionForm,
-  H2,
-  HDisplay,
-  Kanban,
   Modal,
   UserActionForm,
+  CardActionForm,
+  HDisplay,
+  Kanban,
+  H2,
   VerticalSeparator
-} from '@components';
-import { Card, CardDTO, LIST, User } from '@models';
-import { useForm } from '@hooks/use-form';
-import { api } from '@data/api';
-import { useLocalState } from '@hooks/use-local-state';
-import { filterListHelper, moveCardHelper } from '@tools';
+} from './components';
+import { useForm, useLocalState } from './hooks';
 
 const App: React.FC = (): JSX.Element => {
   const { updateLocalState, getLocalState, localState } = useLocalState<{
@@ -24,17 +24,20 @@ const App: React.FC = (): JSX.Element => {
   });
   const [showUserModal, setShowUserModal] = React.useState(false);
   const [showFormModal, setShowFormModal] = React.useState(false);
+  const [actionType, setActionType] = React.useState<'create' | 'update'>(
+    'create'
+  );
 
   const {
     value: userInfos,
     handleChange: onUserInfosChange,
     handleSetValue: handleSetUserValue
-  } = useForm<User>();
+  } = useForm();
   const {
     value: cardInfos,
     handleChange: onCardInfosChange,
     handleSetValue: handleSetCardValue
-  } = useForm<Card>();
+  } = useForm();
 
   const [cardList, setCardList] = React.useState<CardDTO[]>([]);
   const newList = filterListHelper(cardList, 'NEW');
@@ -65,6 +68,7 @@ const App: React.FC = (): JSX.Element => {
           .then(response => {
             updateLocalState({ token: response.data.token }, 'token');
             handleEndAction();
+            window.alert('Olá! Crie suas tarefas já!');
           })
           .catch(err => {
             console.log(err.message);
@@ -76,28 +80,33 @@ const App: React.FC = (): JSX.Element => {
 
     handleEndAction();
   };
-
   const handleEdit = (card: CardDTO) => {
+    setActionType('update');
     handleSetCardValue(card);
     setShowFormModal(true);
   };
   const handleCardInfosSubmit = () => {
-    if (localState?.token) {
-      if (cardInfos) {
+    const checkedLocalState = getLocalState('token');
+    if (checkedLocalState?.token) {
+      if (actionType === 'update') {
         api
-          .updateCard(cardInfos.id, localState.token, cardInfos)
+          .updateCard(cardInfos.id, checkedLocalState.token, cardInfos)
           .then(response => {
-            setCardList([response.data.updatedTask, ...cardList]);
+            const oldCard = cardInfos;
+            const newList = cardList.filter(card => card.id !== oldCard.id);
+            setCardList([response.data.updatedTask, ...newList]);
+            handleEndAction();
           })
-          .catch(err =>
+          .catch(err => {
             window.alert(
               `Não foi possível realizar a solicitção. Erro:${err.message}`
-            )
-          );
-      } else {
+            );
+            handleEndAction();
+          });
+      } else if (actionType === 'create') {
         const cardDTO: Card = { ...cardInfos, list: 'NEW' };
         api
-          .createCard(localState.token, cardDTO)
+          .createCard(checkedLocalState.token, cardDTO)
           .then(response => {
             setCardList([response.data.createdTask, ...cardList]);
             handleEndAction();
@@ -195,6 +204,7 @@ const App: React.FC = (): JSX.Element => {
       </Modal>
       <Modal visible={showFormModal} centerAll={true}>
         <CardActionForm
+          actionType={actionType}
           cardInfos={cardInfos}
           onInfosSubmit={handleCardInfosSubmit}
           onInfosChange={onCardInfosChange}
@@ -212,7 +222,12 @@ const App: React.FC = (): JSX.Element => {
             <Kanban.List>
               <H2>
                 New
-                <Kanban.CardActionButton onClick={() => setShowFormModal(true)}>
+                <Kanban.CardActionButton
+                  onClick={() => {
+                    setActionType('create');
+                    setShowFormModal(true);
+                  }}
+                >
                   <FaPlus />
                 </Kanban.CardActionButton>
               </H2>

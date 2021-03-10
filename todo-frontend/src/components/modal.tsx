@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled, { css } from 'styled-components';
-import { overlayStyle } from '@styles';
+import { overlayStyle } from '../styles';
 
 interface ModalProps {
   visible?: boolean;
