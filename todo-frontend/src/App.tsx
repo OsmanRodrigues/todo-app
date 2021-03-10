@@ -17,7 +17,7 @@ import { useLocalState } from '@hooks/use-local-state';
 import { filterListHelper, moveCardHelper } from '@tools';
 
 const App: React.FC = (): JSX.Element => {
-  const { updateLocalState, getLocalState } = useLocalState<{
+  const { updateLocalState, getLocalState, localState } = useLocalState<{
     token: string | null;
   }>({
     token: null
@@ -37,13 +37,12 @@ const App: React.FC = (): JSX.Element => {
   } = useForm<Card>();
 
   const [cardList, setCardList] = React.useState<CardDTO[]>([]);
-
   const newList = filterListHelper(cardList, 'NEW');
   const todoList = filterListHelper(cardList, 'TODO');
   const doingList = filterListHelper(cardList, 'DOING');
   const doneList = filterListHelper(cardList, 'DONE');
 
-  const handleCancelAction = () => {
+  const handleEndAction = () => {
     setShowUserModal(false);
     setShowFormModal(false);
 
@@ -55,18 +54,17 @@ const App: React.FC = (): JSX.Element => {
     api
       .login(userInfos)
       .then(response => {
-        console.log(response);
         updateLocalState({ token: response.data.token }, 'token');
-        handleCancelAction();
+        handleEndAction();
       })
       .catch(err => {
-        console.log('Usu');
-        console.log(err.code);
+        window.alert('Não foi possível fazer login. Tentando signup...');
+        console.log(err.message);
         api
           .signup(userInfos)
           .then(response => {
             updateLocalState({ token: response.data.token }, 'token');
-            handleCancelAction();
+            handleEndAction();
           })
           .catch(err => {
             console.log(err.message);
@@ -76,26 +74,57 @@ const App: React.FC = (): JSX.Element => {
           });
       });
 
-    handleCancelAction();
-  };
-
-  const handleCreateSubmit = () => {
-    const cardDTO: Card = { ...cardInfos, list: 'NEW' };
-    // confirm request
-    handleCancelAction();
+    handleEndAction();
   };
 
   const handleEdit = (card: CardDTO) => {
     handleSetCardValue(card);
     setShowFormModal(true);
   };
+  const handleCardInfosSubmit = () => {
+    if (localState?.token) {
+      if (cardInfos) {
+        api
+          .updateCard(cardInfos.id, localState.token, cardInfos)
+          .then(response => {
+            setCardList([response.data.updatedTask, ...cardList]);
+          })
+          .catch(err =>
+            window.alert(
+              `Não foi possível realizar a solicitção. Erro:${err.message}`
+            )
+          );
+      } else {
+        const cardDTO: Card = { ...cardInfos, list: 'NEW' };
+        api
+          .createCard(localState.token, cardDTO)
+          .then(response => {
+            setCardList([response.data.createdTask, ...cardList]);
+            handleEndAction();
+          })
+          .catch(err =>
+            window.alert(
+              `Não foi possível realizar a solicitção. Erro:${err.message}`
+            )
+          );
+      }
+    }
+  };
   const handleDelete = (cardToDelete: CardDTO) => {
     if (
       window.confirm(`Confirmar exclusão do cartão "${cardToDelete.title}"?`)
     ) {
-      // confirm request
-      const newList = cardList.filter(card => card.id !== cardToDelete.id);
-      setCardList(newList);
+      if (localState?.token) {
+        api
+          .deleteCard(cardToDelete.id, localState.token)
+          .catch(err =>
+            window.alert(
+              `Não foi possível realizar a solicitção. Erro:${err.message}`
+            )
+          );
+        const newList = cardList.filter(card => card.id !== cardToDelete.id);
+        setCardList(newList);
+      }
     }
   };
 
@@ -104,9 +133,8 @@ const App: React.FC = (): JSX.Element => {
     if (listIndex === 3) {
       return;
     }
-    // confirm request
-    const newList = moveCardHelper(cardToMove, cardList, listIndex, 'next');
 
+    const newList = moveCardHelper(cardToMove, cardList, listIndex, 'next');
     setCardList(newList);
   };
   const handleToPrevious = (cardToMove: CardDTO) => {
@@ -114,9 +142,8 @@ const App: React.FC = (): JSX.Element => {
     if (listIndex === 0) {
       return;
     }
-    // confirm request
-    const newList = moveCardHelper(cardToMove, cardList, listIndex, 'previous');
 
+    const newList = moveCardHelper(cardToMove, cardList, listIndex, 'previous');
     setCardList(newList);
   };
 
@@ -127,17 +154,36 @@ const App: React.FC = (): JSX.Element => {
         .getCardList(checkedLocalState.token)
         .then(response => setCardList(response.data.tasks))
         .catch(err => {
-          console.log(err.message);
-
-          window.alert(
-            'Não foi possíve carregar a lista de cartões. Tente recarregar a página.'
-          );
+          if (err.message.includes('400')) {
+            setShowUserModal(true);
+            window.alert('Sessão expirada. Faça login novamente.');
+          } else {
+            window.alert(
+              'Não foi possíve carregar a lista de cartões. Tente recarregar a página.'
+            );
+          }
         });
     } else {
       setShowUserModal(true);
     }
   }, []);
-  console.log(showUserModal);
+  React.useEffect(() => {
+    return () => {
+      const checkedLocalState = getLocalState('token');
+      if (checkedLocalState?.token) {
+        const updateList = cardList.map(card => {
+          return api.updateCard(
+            card.id,
+            checkedLocalState.token as string,
+            card
+          );
+        });
+
+        Promise.all(updateList);
+      }
+    };
+  }, []);
+
   return (
     <Container>
       <Modal visible={showUserModal} centerAll={true}>
@@ -150,9 +196,9 @@ const App: React.FC = (): JSX.Element => {
       <Modal visible={showFormModal} centerAll={true}>
         <CardActionForm
           cardInfos={cardInfos}
-          onInfosSubmit={handleCreateSubmit}
+          onInfosSubmit={handleCardInfosSubmit}
           onInfosChange={onCardInfosChange}
-          cancelHandler={handleCancelAction}
+          cancelHandler={handleEndAction}
         />
       </Modal>
       <Row justify="center">
