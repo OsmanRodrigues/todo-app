@@ -11,6 +11,7 @@ import {
 import { Card, CardDTO, LIST } from '@models';
 import { Modal } from '@components/modal';
 import { useForm } from '@hooks/use-form';
+import { api } from '@data/api';
 
 const CardInfo = {
   id: '510cc268-e2bb-4690-abb0-f49e18e9d55b',
@@ -66,6 +67,29 @@ const moveCardHelper = (
 };
 
 const App: React.FC = (): JSX.Element => {
+  React.useEffect(() => {
+    // const bodyUser = { email: 'hendrix@jimmy.com', password: 'hendrix1234' };
+    // const bodyCard: Card = {
+    //   title: 'Hendrix task 4',
+    //   content: 'my today task 4',
+    //   list: 'NEW'
+    // };
+    // const bodyUpdateCard: Card = {
+    //   title: 'Hendrix task 4',
+    //   content: 'my today task 4',
+    //   list: 'TODO'
+    // };
+    // const cardId = 'e6d8f6a7-5826-4e02-97d1-7f6ee0ca58de';
+    // const token =
+    //   'Bearer  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQzNDBmNzM1LTZjYjMtNGRhZC1hMTE5LWU0Yjg2MDlkMjAxZiIsImlhdCI6MTYxNTM5MzE3NSwiZXhwIjoxNjE1Mzk2Nzc1fQ.e5vSoUAEKdmjH1djUOqbxFzC00K2cpya7povGYouVdk';
+    // api
+    //   .getCardList(token)
+    //   .then(response => {
+    //     console.log(response.data.tasks);
+    //   })
+    //   .catch(err => console.log(err));
+  }, []);
+
   const {
     value: cardInfos,
     handleChange: onCardInfosChange,
