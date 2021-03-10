@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 const App: React.FC = (): JSX.Element => {
-  return <div>My app</div>;
+  return <div>My ToDo App</div>;
 };
 
 export default App;
