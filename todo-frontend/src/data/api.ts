@@ -12,6 +12,7 @@ import axios from 'axios';
 const service = axios.create({
   baseURL: String(process.env.REACT_APP_API_URL)
 });
+
 export const api = {
   signup: (body: User): Promise<AuthenticatedResponse<Authorization>> =>
     service.post('signup', body),
