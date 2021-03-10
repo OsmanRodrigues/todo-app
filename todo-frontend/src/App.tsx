@@ -1,7 +1,16 @@
 import * as React from 'react';
-import { H2, HDisplay, Kanban, VerticalSeparator } from '@components';
 import { Col, Container, Row } from 'react-grid-system';
-import { CardDTO, LIST } from '@models';
+import { FaPlus } from 'react-icons/fa';
+import {
+  CardActionForm,
+  H2,
+  HDisplay,
+  Kanban,
+  VerticalSeparator
+} from '@components';
+import { Card, CardDTO, LIST } from '@models';
+import { Modal } from '@components/modal';
+import { useForm } from '@hooks/use-form';
 
 const CardInfo = {
   id: '510cc268-e2bb-4690-abb0-f49e18e9d55b',
@@ -57,6 +66,13 @@ const moveCardHelper = (
 };
 
 const App: React.FC = (): JSX.Element => {
+  const {
+    value: cardInfos,
+    handleChange: onCardInfosChange,
+    handleSetValue
+  } = useForm<Card>();
+
+  const [showModal, setShowModal] = React.useState(false);
   const [cardList, setCardList] = React.useState(generalList);
 
   const newList = filterListHelper(cardList, 'NEW');
@@ -64,6 +80,20 @@ const App: React.FC = (): JSX.Element => {
   const doingList = filterListHelper(cardList, 'DOING');
   const doneList = filterListHelper(cardList, 'DONE');
 
+  const handleCancelAction = () => {
+    setShowModal(false);
+    handleSetValue(null);
+  };
+  const handleCreateSubmit = () => {
+    const cardDTO: Card = { ...cardInfos, list: 'NEW' };
+    // confirm request
+    handleCancelAction();
+  };
+
+  const handleEdit = (card: CardDTO) => {
+    handleSetValue(card);
+    setShowModal(true);
+  };
   const handleDelete = (cardToDelete: CardDTO) => {
     if (
       window.confirm(`Confirmar exclusão do cartão "${cardToDelete.title}"?`)
@@ -73,9 +103,7 @@ const App: React.FC = (): JSX.Element => {
       setCardList(newList);
     }
   };
-  const handleEdit = (card: CardDTO) => {
-    console.log(card);
-  };
+
   const handleToNext = (cardToMove: CardDTO) => {
     const listIndex = LIST[cardToMove.list];
     if (listIndex === 3) {
@@ -99,6 +127,14 @@ const App: React.FC = (): JSX.Element => {
 
   return (
     <Container>
+      <Modal visible={showModal} centerAll={true}>
+        <CardActionForm
+          cardInfos={cardInfos}
+          onInfosSubmit={handleCreateSubmit}
+          onInfosChange={onCardInfosChange}
+          cancelHandler={handleCancelAction}
+        />
+      </Modal>
       <Row justify="center">
         <Col sm={12}>
           <HDisplay>ToDo App</HDisplay>
@@ -108,7 +144,12 @@ const App: React.FC = (): JSX.Element => {
         <Row>
           <Col sm={12} md={6} lg={3}>
             <Kanban.List>
-              <H2>New</H2>
+              <H2>
+                New
+                <Kanban.CardActionButton onClick={() => setShowModal(true)}>
+                  <FaPlus />
+                </Kanban.CardActionButton>
+              </H2>
               {newList.map(item => (
                 <Kanban.Card
                   onDelete={() => handleDelete(item)}

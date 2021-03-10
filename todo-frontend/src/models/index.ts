@@ -5,11 +5,14 @@ export enum LIST {
   'DONE'
 }
 
-export interface CardDTO {
-  id: string;
+export interface Card {
   title: string;
-  content?: string;
   list: keyof typeof LIST;
+  content?: string;
+}
+
+export interface CardDTO extends Card {
+  id: string;
 }
 
 export interface CardActions {

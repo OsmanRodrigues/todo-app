@@ -120,6 +120,8 @@ const Card: React.FC<CardProps> = ({
 
 export const Kanban = {
   Card,
+  CardActionArea,
+  CardActionButton,
   List,
   View
 };

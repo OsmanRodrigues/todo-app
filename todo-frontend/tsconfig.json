@@ -20,6 +20,8 @@
     "paths": {
       "@components": ["components"],
       "@components/*": ["components/*"],
+      "@hooks": ["hooks"],
+      "@hooks/*": ["hooks/*"],
       "@models": ["models"],
       "@models/*": ["models/*"],
       "@styles": ["styles"],
