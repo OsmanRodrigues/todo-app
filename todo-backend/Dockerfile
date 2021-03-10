@@ -1,5 +1,5 @@
-FROM node:alpine
-WORKDIR /todo-backend/api
+FROM node:12.19-alpine
+WORKDIR /todo-backend
 COPY package*.json ./
 RUN npm install
 COPY . .
