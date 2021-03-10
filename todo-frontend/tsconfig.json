@@ -17,7 +17,10 @@
     "jsx": "react-jsx",
     "rootDir": ".",
     "baseUrl": "./src",
-    "paths": {}
+    "paths": {
+      "@components": ["components"],
+      "@components/*": ["components/*"]
+    }
   },
   "include": ["src"]
 }
