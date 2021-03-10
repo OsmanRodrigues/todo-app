@@ -24,12 +24,15 @@
   "rules": {
     "prettier/prettier": "error",
     "space-before-function-paren": "off",
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off",
+    "react/jsx-uses-react": "off",
     "semi": ["error", "always"],
     "quotes": ["error", "single"],
     "no-useless-catch": "warn",
     "no-useless-constructor": "off",
     "no-use-before-define": "off",
-    "react/jsx-uses-react": "off"
+    "@typescript-eslint/no-use-before-define": ["error"]
   },
   "settings": {
     "react": {
