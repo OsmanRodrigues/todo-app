@@ -2,11 +2,7 @@
 
 ## Descrição
 
-Este projeto web fullstack consiste na implementação de banco de dados, backend e frontend interligados a partir da orquestração de containers com Docker
-
-Banco de dados - Postgres
-Backend - Express
-Frontend - React
+Este projeto web fullstack consiste na implementação de banco de dados, backend e frontend interligados a partir da orquestração de containers com Docker.
 
 ## Tecnologias principais
 
